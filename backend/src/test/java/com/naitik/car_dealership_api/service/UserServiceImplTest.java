@@ -36,6 +36,9 @@ class UserServiceImplTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private JwtService jwtService;
+
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -149,5 +152,42 @@ class UserServiceImplTest {
         LoginResponse response = userService.login(request);
 
         assertNotNull(response);
+    }
+
+    @Test
+    void shouldGenerateJwtTokenAfterSuccessfulLogin() {
+
+        // Arrange
+        LoginRequest request = LoginRequest.builder()
+                .email("naitik@gmail.com")
+                .password("password123")
+                .build();
+
+        User user = User.builder()
+                .id(1L)
+                .name("Naitik")
+                .email("naitik@gmail.com")
+                .password("encodedPassword")
+                .role(Role.USER)
+                .build();
+
+        when(userRepository.findByEmail(request.getEmail()))
+                .thenReturn(Optional.of(user));
+
+        when(passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword()))
+                .thenReturn(true);
+
+        when(jwtService.generateToken(user))
+                .thenReturn("jwt-token");
+
+        // Act
+        LoginResponse response = userService.login(request);
+
+        // Assert
+        assertEquals("jwt-token", response.getToken());
+
+        verify(jwtService).generateToken(user);
     }
 }

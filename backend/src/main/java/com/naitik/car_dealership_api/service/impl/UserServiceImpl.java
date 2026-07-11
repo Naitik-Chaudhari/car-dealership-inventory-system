@@ -8,6 +8,7 @@ import com.naitik.car_dealership_api.entity.User;
 import com.naitik.car_dealership_api.exception.EmailAlreadyExistsException;
 import com.naitik.car_dealership_api.exception.InvalidCredentialsException;
 import com.naitik.car_dealership_api.repository.UserRepository;
+import com.naitik.car_dealership_api.service.JwtService;
 import com.naitik.car_dealership_api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final JwtService jwtService;
 
     @Override
     public void register(RegisterRequest request) {
