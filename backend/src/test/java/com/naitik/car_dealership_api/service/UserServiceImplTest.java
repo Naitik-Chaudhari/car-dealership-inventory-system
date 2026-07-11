@@ -12,6 +12,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,6 +27,9 @@ class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -79,5 +83,36 @@ class UserServiceImplTest {
         assertEquals("Email already registered.", exception.getMessage());
 
         verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void shouldEncodePasswordBeforeSaving() {
+
+        // Arrange
+        RegisterRequest request = RegisterRequest.builder()
+                .name("Naitik")
+                .email("naitik@gmail.com")
+                .password("password123")
+                .build();
+
+        when(userRepository.existsByEmail(request.getEmail()))
+                .thenReturn(false);
+
+        when(passwordEncoder.encode("password123"))
+                .thenReturn("encodedPassword123");
+
+        // Act
+        userService.register(request);
+
+        // Assert
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+        verify(userRepository).save(userCaptor.capture());
+
+        User savedUser = userCaptor.getValue();
+
+        assertEquals("encodedPassword123", savedUser.getPassword());
+
+        verify(passwordEncoder).encode("password123");
     }
 }
