@@ -51,4 +51,13 @@ public class VehicleController {
                 minPrice,
                 maxPrice);
     }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public VehicleResponse updateVehicle(
+            @PathVariable Long id,
+            @Valid @RequestBody VehicleRequest request) {
+
+        return vehicleService.updateVehicle(id, request);
+    }
 }

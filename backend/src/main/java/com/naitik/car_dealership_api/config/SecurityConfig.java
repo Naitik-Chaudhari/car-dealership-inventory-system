@@ -39,6 +39,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/vehicles/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/vehicles")
                         .hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/vehicles/**")
+                        .hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(
