@@ -2,8 +2,8 @@ package com.naitik.car_dealership_api.specification;
 
 import com.naitik.car_dealership_api.entity.Vehicle;
 import com.naitik.car_dealership_api.entity.VehicleCategory;
-import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -18,40 +18,47 @@ public class VehicleSpecification {
             BigDecimal minPrice,
             BigDecimal maxPrice) {
 
-        return (root, query, cb) -> {
+        return (root, query, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
 
-            if (make != null) {
+            if (make != null && !make.isBlank()) {
                 predicates.add(
-                        cb.equal(root.get("make"), make));
+                        criteriaBuilder.equal(root.get("make"), make)
+                );
             }
 
-            if (model != null) {
+            if (model != null && !model.isBlank()) {
                 predicates.add(
-                        cb.equal(root.get("model"), model));
+                        criteriaBuilder.equal(root.get("model"), model)
+                );
             }
 
             if (category != null) {
                 predicates.add(
-                        cb.equal(root.get("category"), category));
+                        criteriaBuilder.equal(root.get("category"), category)
+                );
             }
 
             if (minPrice != null) {
                 predicates.add(
-                        cb.greaterThanOrEqualTo(
+                        criteriaBuilder.greaterThanOrEqualTo(
                                 root.get("price"),
-                                minPrice));
+                                minPrice
+                        )
+                );
             }
 
             if (maxPrice != null) {
                 predicates.add(
-                        cb.lessThanOrEqualTo(
+                        criteriaBuilder.lessThanOrEqualTo(
                                 root.get("price"),
-                                maxPrice));
+                                maxPrice
+                        )
+                );
             }
 
-            return cb.and(predicates.toArray(new Predicate[0]));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
 }

@@ -3,12 +3,15 @@ package com.naitik.car_dealership_api.service.impl;
 import com.naitik.car_dealership_api.dto.request.VehicleRequest;
 import com.naitik.car_dealership_api.dto.response.VehicleResponse;
 import com.naitik.car_dealership_api.entity.Vehicle;
+import com.naitik.car_dealership_api.entity.VehicleCategory;
 import com.naitik.car_dealership_api.exception.DuplicateVehicleException;
 import com.naitik.car_dealership_api.repository.VehicleRepository;
 import com.naitik.car_dealership_api.service.VehicleService;
+import com.naitik.car_dealership_api.specification.VehicleSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -52,6 +55,33 @@ public class VehicleServiceImpl implements VehicleService {
     public List<VehicleResponse> getAllVehicles() {
 
         return vehicleRepository.findAll()
+                .stream()
+                .map(vehicle -> VehicleResponse.builder()
+                        .id(vehicle.getId())
+                        .make(vehicle.getMake())
+                        .model(vehicle.getModel())
+                        .category(vehicle.getCategory())
+                        .price(vehicle.getPrice())
+                        .quantity(vehicle.getQuantity())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public List<VehicleResponse> searchVehicles(
+            String make,
+            String model,
+            VehicleCategory category,
+            BigDecimal minPrice,
+            BigDecimal maxPrice) {
+
+        return vehicleRepository.findAll(
+                        VehicleSpecification.search(
+                                make,
+                                model,
+                                category,
+                                minPrice,
+                                maxPrice))
                 .stream()
                 .map(vehicle -> VehicleResponse.builder()
                         .id(vehicle.getId())
