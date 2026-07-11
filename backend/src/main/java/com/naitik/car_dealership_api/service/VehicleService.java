@@ -20,4 +20,6 @@ public interface VehicleService {
             BigDecimal minPrice,
             BigDecimal maxPrice);
 
+    VehicleResponse updateVehicle(Long id, VehicleRequest request);
+
 }

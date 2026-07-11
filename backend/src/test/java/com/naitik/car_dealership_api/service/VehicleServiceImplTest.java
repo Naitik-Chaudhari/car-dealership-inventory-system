@@ -5,6 +5,7 @@ import com.naitik.car_dealership_api.dto.response.VehicleResponse;
 import com.naitik.car_dealership_api.entity.Vehicle;
 import com.naitik.car_dealership_api.entity.VehicleCategory;
 import com.naitik.car_dealership_api.exception.DuplicateVehicleException;
+import com.naitik.car_dealership_api.exception.VehicleNotFoundException;
 import com.naitik.car_dealership_api.repository.VehicleRepository;
 import com.naitik.car_dealership_api.service.impl.VehicleServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -316,5 +318,108 @@ class VehicleServiceImplTest {
         assertEquals(BigDecimal.valueOf(4500000), vehicle.getPrice());
 
         verify(vehicleRepository).findAll(any(Specification.class));
+    }
+
+    @Test
+    void shouldUpdateVehicleSuccessfully() {
+
+        Long vehicleId = 1L;
+
+        Vehicle existingVehicle = Vehicle.builder()
+                .id(vehicleId)
+                .make("Toyota")
+                .model("Fortuner")
+                .category(VehicleCategory.SUV)
+                .price(BigDecimal.valueOf(4500000))
+                .quantity(5)
+                .build();
+
+        VehicleRequest request = VehicleRequest.builder()
+                .make("Honda")
+                .model("City")
+                .category(VehicleCategory.SEDAN)
+                .price(BigDecimal.valueOf(1800000))
+                .quantity(8)
+                .build();
+
+        when(vehicleRepository.findById(vehicleId))
+                .thenReturn(Optional.of(existingVehicle));
+
+        when(vehicleRepository.existsByMakeAndModelAndCategory(
+                "Honda",
+                "City",
+                VehicleCategory.SEDAN))
+                .thenReturn(false);
+
+        when(vehicleRepository.save(any(Vehicle.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        VehicleResponse response =
+                vehicleService.updateVehicle(vehicleId, request);
+
+        assertEquals("Honda", response.getMake());
+        assertEquals("City", response.getModel());
+        assertEquals(VehicleCategory.SEDAN, response.getCategory());
+
+        verify(vehicleRepository).save(existingVehicle);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenVehicleDoesNotExist() {
+
+        VehicleRequest request = VehicleRequest.builder()
+                .make("Honda")
+                .model("City")
+                .category(VehicleCategory.SEDAN)
+                .price(BigDecimal.valueOf(1800000))
+                .quantity(8)
+                .build();
+
+        when(vehicleRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                VehicleNotFoundException.class,
+                () -> vehicleService.updateVehicle(1L, request)
+        );
+
+        verify(vehicleRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenUpdatingToDuplicateVehicle() {
+
+        Vehicle existingVehicle = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category(VehicleCategory.SUV)
+                .price(BigDecimal.valueOf(4500000))
+                .quantity(5)
+                .build();
+
+        VehicleRequest request = VehicleRequest.builder()
+                .make("Honda")
+                .model("City")
+                .category(VehicleCategory.SEDAN)
+                .price(BigDecimal.valueOf(1800000))
+                .quantity(8)
+                .build();
+
+        when(vehicleRepository.findById(1L))
+                .thenReturn(Optional.of(existingVehicle));
+
+        when(vehicleRepository.existsByMakeAndModelAndCategory(
+                "Honda",
+                "City",
+                VehicleCategory.SEDAN))
+                .thenReturn(true);
+
+        assertThrows(
+                DuplicateVehicleException.class,
+                () -> vehicleService.updateVehicle(1L, request)
+        );
+
+        verify(vehicleRepository, never()).save(any());
     }
 }
