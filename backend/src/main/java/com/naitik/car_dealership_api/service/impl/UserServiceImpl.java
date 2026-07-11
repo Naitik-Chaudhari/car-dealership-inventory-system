@@ -1,6 +1,8 @@
 package com.naitik.car_dealership_api.service.impl;
 
+import com.naitik.car_dealership_api.dto.request.LoginRequest;
 import com.naitik.car_dealership_api.dto.request.RegisterRequest;
+import com.naitik.car_dealership_api.dto.response.LoginResponse;
 import com.naitik.car_dealership_api.entity.Role;
 import com.naitik.car_dealership_api.entity.User;
 import com.naitik.car_dealership_api.exception.EmailAlreadyExistsException;
@@ -33,5 +35,10 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         userRepository.save(user);
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest request) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }

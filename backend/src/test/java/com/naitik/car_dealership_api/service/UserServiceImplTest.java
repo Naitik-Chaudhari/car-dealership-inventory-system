@@ -1,6 +1,8 @@
 package com.naitik.car_dealership_api.service;
 
+import com.naitik.car_dealership_api.dto.request.LoginRequest;
 import com.naitik.car_dealership_api.dto.request.RegisterRequest;
+import com.naitik.car_dealership_api.dto.response.LoginResponse;
 import com.naitik.car_dealership_api.entity.Role;
 import com.naitik.car_dealership_api.entity.User;
 import com.naitik.car_dealership_api.exception.EmailAlreadyExistsException;
@@ -14,6 +16,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -114,5 +119,35 @@ class UserServiceImplTest {
         assertEquals("encodedPassword123", savedUser.getPassword());
 
         verify(passwordEncoder).encode("password123");
+    }
+
+    @Test
+    void shouldLoginSuccessfully() {
+
+        // Arrange
+        LoginRequest request = LoginRequest.builder()
+                .email("naitik@gmail.com")
+                .password("password123")
+                .build();
+
+        User user = User.builder()
+                .id(1L)
+                .name("Naitik")
+                .email("naitik@gmail.com")
+                .password("encodedPassword")
+                .role(Role.USER)
+                .build();
+
+        when(userRepository.findByEmail(request.getEmail()))
+                .thenReturn(Optional.of(user));
+
+        when(passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword()))
+                .thenReturn(true);
+
+        LoginResponse response = userService.login(request);
+
+        assertNotNull(response);
     }
 }
