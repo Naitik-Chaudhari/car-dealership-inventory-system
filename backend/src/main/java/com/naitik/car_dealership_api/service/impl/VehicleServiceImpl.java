@@ -9,6 +9,8 @@ import com.naitik.car_dealership_api.service.VehicleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class VehicleServiceImpl implements VehicleService {
@@ -44,5 +46,21 @@ public class VehicleServiceImpl implements VehicleService {
                 .price(savedVehicle.getPrice())
                 .quantity(savedVehicle.getQuantity())
                 .build();
+    }
+
+    @Override
+    public List<VehicleResponse> getAllVehicles() {
+
+        return vehicleRepository.findAll()
+                .stream()
+                .map(vehicle -> VehicleResponse.builder()
+                        .id(vehicle.getId())
+                        .make(vehicle.getMake())
+                        .model(vehicle.getModel())
+                        .category(vehicle.getCategory())
+                        .price(vehicle.getPrice())
+                        .quantity(vehicle.getQuantity())
+                        .build())
+                .toList();
     }
 }
