@@ -38,14 +38,11 @@ public class VehicleController {
 
             @RequestParam(required = false) String model,
 
-            @RequestParam(required = false)
-            VehicleCategory category,
+            @RequestParam(required = false) VehicleCategory category,
 
-            @RequestParam(required = false)
-            BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal minPrice,
 
-            @RequestParam(required = false)
-            BigDecimal maxPrice) {
+            @RequestParam(required = false) BigDecimal maxPrice) {
 
         return vehicleService.searchVehicles(
                 make,
