@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -112,5 +113,45 @@ class VehicleServiceImplTest {
                         request.getCategory());
 
         verify(vehicleRepository, never()).save(any(Vehicle.class));
+    }
+
+    @Test
+    void shouldReturnAllVehicles() {
+
+        // Arrange
+        List<Vehicle> vehicles = List.of(
+                Vehicle.builder()
+                        .id(1L)
+                        .make("Toyota")
+                        .model("Fortuner")
+                        .category(VehicleCategory.SUV)
+                        .price(BigDecimal.valueOf(4500000))
+                        .quantity(5)
+                        .build(),
+
+                Vehicle.builder()
+                        .id(2L)
+                        .make("Honda")
+                        .model("City")
+                        .category(VehicleCategory.SEDAN)
+                        .price(BigDecimal.valueOf(1500000))
+                        .quantity(10)
+                        .build()
+        );
+
+        when(vehicleRepository.findAll())
+                .thenReturn(vehicles);
+
+        // Act
+        List<VehicleResponse> response =
+                vehicleService.getAllVehicles();
+
+        // Assert
+        assertEquals(2, response.size());
+
+        assertEquals("Toyota", response.get(0).getMake());
+        assertEquals("Honda", response.get(1).getMake());
+
+        verify(vehicleRepository).findAll();
     }
 }
