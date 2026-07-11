@@ -21,6 +21,18 @@ public class VehicleServiceImpl implements VehicleService {
 
     private final VehicleRepository vehicleRepository;
 
+    private VehicleResponse mapToResponse(Vehicle vehicle) {
+
+        return VehicleResponse.builder()
+                .id(vehicle.getId())
+                .make(vehicle.getMake())
+                .model(vehicle.getModel())
+                .category(vehicle.getCategory())
+                .price(vehicle.getPrice())
+                .quantity(vehicle.getQuantity())
+                .build();
+    }
+
     @Override
     public VehicleResponse addVehicle(VehicleRequest request) {
 
@@ -42,14 +54,7 @@ public class VehicleServiceImpl implements VehicleService {
 
         Vehicle savedVehicle = vehicleRepository.save(vehicle);
 
-        return VehicleResponse.builder()
-                .id(savedVehicle.getId())
-                .make(savedVehicle.getMake())
-                .model(savedVehicle.getModel())
-                .category(savedVehicle.getCategory())
-                .price(savedVehicle.getPrice())
-                .quantity(savedVehicle.getQuantity())
-                .build();
+        return mapToResponse(savedVehicle);
     }
 
     @Override
@@ -57,14 +62,7 @@ public class VehicleServiceImpl implements VehicleService {
 
         return vehicleRepository.findAll()
                 .stream()
-                .map(vehicle -> VehicleResponse.builder()
-                        .id(vehicle.getId())
-                        .make(vehicle.getMake())
-                        .model(vehicle.getModel())
-                        .category(vehicle.getCategory())
-                        .price(vehicle.getPrice())
-                        .quantity(vehicle.getQuantity())
-                        .build())
+                .map(this::mapToResponse)
                 .toList();
     }
 
@@ -84,14 +82,7 @@ public class VehicleServiceImpl implements VehicleService {
                                 minPrice,
                                 maxPrice))
                 .stream()
-                .map(vehicle -> VehicleResponse.builder()
-                        .id(vehicle.getId())
-                        .make(vehicle.getMake())
-                        .model(vehicle.getModel())
-                        .category(vehicle.getCategory())
-                        .price(vehicle.getPrice())
-                        .quantity(vehicle.getQuantity())
-                        .build())
+                .map(this::mapToResponse)
                 .toList();
     }
 
@@ -125,13 +116,6 @@ public class VehicleServiceImpl implements VehicleService {
 
         Vehicle updatedVehicle = vehicleRepository.save(vehicle);
 
-        return VehicleResponse.builder()
-                .id(updatedVehicle.getId())
-                .make(updatedVehicle.getMake())
-                .model(updatedVehicle.getModel())
-                .category(updatedVehicle.getCategory())
-                .price(updatedVehicle.getPrice())
-                .quantity(updatedVehicle.getQuantity())
-                .build();
+        return mapToResponse(updatedVehicle);
     }
 }
