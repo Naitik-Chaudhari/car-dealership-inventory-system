@@ -118,4 +118,14 @@ public class VehicleServiceImpl implements VehicleService {
 
         return mapToResponse(updatedVehicle);
     }
+
+    @Override
+    public void deleteVehicle(Long id) {
+
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() ->
+                        new VehicleNotFoundException("Vehicle not found"));
+
+        vehicleRepository.deleteById(vehicle.getId());
+    }
 }
