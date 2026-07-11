@@ -18,13 +18,18 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String make;
 
+    @Column(nullable = false)
     private String model;
 
+    @Column(nullable = false)
     private String category;
 
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
+    @Column(nullable = false)
     private Integer quantity;
 }

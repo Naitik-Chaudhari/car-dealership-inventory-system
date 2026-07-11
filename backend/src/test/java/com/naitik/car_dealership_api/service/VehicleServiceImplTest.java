@@ -3,6 +3,7 @@ package com.naitik.car_dealership_api.service;
 import com.naitik.car_dealership_api.dto.request.VehicleRequest;
 import com.naitik.car_dealership_api.dto.response.VehicleResponse;
 import com.naitik.car_dealership_api.entity.Vehicle;
+import com.naitik.car_dealership_api.exception.DuplicateVehicleException;
 import com.naitik.car_dealership_api.repository.VehicleRepository;
 import com.naitik.car_dealership_api.service.impl.VehicleServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -16,8 +17,7 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class VehicleServiceImplTest {
@@ -76,5 +76,40 @@ class VehicleServiceImplTest {
         assertEquals(request.getCategory(), vehicle.getCategory());
         assertEquals(request.getPrice(), vehicle.getPrice());
         assertEquals(request.getQuantity(), vehicle.getQuantity());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenVehicleAlreadyExists() {
+
+        // Arrange
+        VehicleRequest request = VehicleRequest.builder()
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(BigDecimal.valueOf(4500000))
+                .quantity(5)
+                .build();
+
+        when(vehicleRepository.existsByMakeAndModelAndCategory(
+                request.getMake(),
+                request.getModel(),
+                request.getCategory()))
+                .thenReturn(true);
+
+        // Act & Assert
+        DuplicateVehicleException exception = assertThrows(
+                DuplicateVehicleException.class,
+                () -> vehicleService.addVehicle(request)
+        );
+
+        assertEquals("Vehicle already exists", exception.getMessage());
+
+        verify(vehicleRepository)
+                .existsByMakeAndModelAndCategory(
+                        request.getMake(),
+                        request.getModel(),
+                        request.getCategory());
+
+        verify(vehicleRepository, never()).save(any(Vehicle.class));
     }
 }
