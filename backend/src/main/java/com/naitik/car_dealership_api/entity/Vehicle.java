@@ -24,8 +24,9 @@ public class Vehicle {
     @Column(nullable = false)
     private String model;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String category;
+    private VehicleCategory category;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;

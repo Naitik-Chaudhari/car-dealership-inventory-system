@@ -3,6 +3,7 @@ package com.naitik.car_dealership_api.service;
 import com.naitik.car_dealership_api.dto.request.VehicleRequest;
 import com.naitik.car_dealership_api.dto.response.VehicleResponse;
 import com.naitik.car_dealership_api.entity.Vehicle;
+import com.naitik.car_dealership_api.entity.VehicleCategory;
 import com.naitik.car_dealership_api.exception.DuplicateVehicleException;
 import com.naitik.car_dealership_api.repository.VehicleRepository;
 import com.naitik.car_dealership_api.service.impl.VehicleServiceImpl;
@@ -35,7 +36,7 @@ class VehicleServiceImplTest {
         VehicleRequest request = VehicleRequest.builder()
                 .make("Toyota")
                 .model("Fortuner")
-                .category("SUV")
+                .category(VehicleCategory.SUV)
                 .price(BigDecimal.valueOf(4500000))
                 .quantity(5)
                 .build();
@@ -44,7 +45,7 @@ class VehicleServiceImplTest {
                 .id(1L)
                 .make("Toyota")
                 .model("Fortuner")
-                .category("SUV")
+                .category(VehicleCategory.SUV)
                 .price(BigDecimal.valueOf(4500000))
                 .quantity(5)
                 .build();
@@ -60,7 +61,7 @@ class VehicleServiceImplTest {
         assertEquals(1L, response.getId());
         assertEquals("Toyota", response.getMake());
         assertEquals("Fortuner", response.getModel());
-        assertEquals("SUV", response.getCategory());
+        assertEquals(VehicleCategory.SUV, response.getCategory());
         assertEquals(BigDecimal.valueOf(4500000), response.getPrice());
         assertEquals(5, response.getQuantity());
 
@@ -85,7 +86,7 @@ class VehicleServiceImplTest {
         VehicleRequest request = VehicleRequest.builder()
                 .make("Toyota")
                 .model("Fortuner")
-                .category("SUV")
+                .category(VehicleCategory.SUV)
                 .price(BigDecimal.valueOf(4500000))
                 .quantity(5)
                 .build();

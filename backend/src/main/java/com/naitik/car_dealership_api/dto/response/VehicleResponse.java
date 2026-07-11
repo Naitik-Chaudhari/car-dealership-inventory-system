@@ -1,5 +1,6 @@
 package com.naitik.car_dealership_api.dto.response;
 
+import com.naitik.car_dealership_api.entity.VehicleCategory;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ public class VehicleResponse {
 
     private String model;
 
-    private String category;
+    private VehicleCategory category;
 
     private BigDecimal price;
 
