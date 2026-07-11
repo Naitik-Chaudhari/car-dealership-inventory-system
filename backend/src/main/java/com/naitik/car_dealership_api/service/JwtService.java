@@ -1,6 +1,7 @@
 package com.naitik.car_dealership_api.service;
 
 import com.naitik.car_dealership_api.entity.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public interface JwtService {
 
@@ -10,7 +11,7 @@ public interface JwtService {
 
     String extractRole(String token);
 
-    boolean isTokenValid(String token, User user);
+    boolean isTokenValid(String token, UserDetails userDetails);
 
     boolean isTokenExpired(String token);
 

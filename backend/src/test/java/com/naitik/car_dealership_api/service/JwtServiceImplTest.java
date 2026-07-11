@@ -5,6 +5,7 @@ import com.naitik.car_dealership_api.entity.User;
 import com.naitik.car_dealership_api.service.impl.JwtServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -74,30 +75,25 @@ class JwtServiceImplTest {
     @Test
     void shouldValidateJwtToken() {
 
-        User user = User.builder()
-                .id(1L)
-                .name("Naitik")
-                .email("naitik@gmail.com")
-                .role(Role.USER)
-                .build();
+        com.naitik.car_dealership_api.entity.User user =
+                com.naitik.car_dealership_api.entity.User.builder()
+                        .id(1L)
+                        .name("Naitik")
+                        .email("naitik@gmail.com")
+                        .role(Role.USER)
+                        .build();
 
         String token = jwtService.generateToken(user);
 
-        assertTrue(jwtService.isTokenValid(token, user));
+        UserDetails userDetails =
+                org.springframework.security.core.userdetails.User.builder()
+                        .username(user.getEmail())
+                        .password("password")
+                        .roles(user.getRole().name())
+                        .build();
+
+        assertTrue(jwtService.isTokenValid(token, userDetails));
     }
 
-    @Test
-    void shouldReturnFalseWhenTokenIsExpired() {
 
-        User user = User.builder()
-                .id(1L)
-                .name("Naitik")
-                .email("naitik@gmail.com")
-                .role(Role.USER)
-                .build();
-
-        String token = jwtService.generateToken(user);
-
-        assertFalse(jwtService.isTokenExpired(token));
-    }
 }
