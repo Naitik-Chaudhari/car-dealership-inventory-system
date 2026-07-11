@@ -52,6 +52,10 @@ public class UserServiceImpl implements UserService {
             throw new InvalidCredentialsException("Invalid email or password");
         }
 
-        return LoginResponse.builder().build();
+        String token = jwtService.generateToken(user);
+
+        return LoginResponse.builder()
+                .token(token)
+                .build();
     }
 }
