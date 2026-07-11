@@ -60,4 +60,10 @@ public class VehicleController {
 
         return vehicleService.updateVehicle(id, request);
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteVehicle(@PathVariable Long id) {
+        vehicleService.deleteVehicle(id);
+    }
 }
