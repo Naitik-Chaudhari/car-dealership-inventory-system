@@ -10,4 +10,8 @@ public interface JwtService {
 
     String extractRole(String token);
 
+    boolean isTokenValid(String token, User user);
+
+    boolean isTokenExpired(String token);
+
 }

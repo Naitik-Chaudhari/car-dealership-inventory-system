@@ -70,4 +70,34 @@ class JwtServiceImplTest {
 
         assertEquals("ADMIN", role);
     }
+
+    @Test
+    void shouldValidateJwtToken() {
+
+        User user = User.builder()
+                .id(1L)
+                .name("Naitik")
+                .email("naitik@gmail.com")
+                .role(Role.USER)
+                .build();
+
+        String token = jwtService.generateToken(user);
+
+        assertTrue(jwtService.isTokenValid(token, user));
+    }
+
+    @Test
+    void shouldReturnFalseWhenTokenIsExpired() {
+
+        User user = User.builder()
+                .id(1L)
+                .name("Naitik")
+                .email("naitik@gmail.com")
+                .role(Role.USER)
+                .build();
+
+        String token = jwtService.generateToken(user);
+
+        assertFalse(jwtService.isTokenExpired(token));
+    }
 }
