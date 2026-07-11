@@ -422,4 +422,38 @@ class VehicleServiceImplTest {
 
         verify(vehicleRepository, never()).save(any());
     }
+
+    @Test
+    void shouldDeleteVehicleSuccessfully() {
+
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category(VehicleCategory.SUV)
+                .price(BigDecimal.valueOf(4500000))
+                .quantity(5)
+                .build();
+
+        when(vehicleRepository.findById(1L))
+                .thenReturn(Optional.of(vehicle));
+
+        vehicleService.deleteVehicle(1L);
+
+        verify(vehicleRepository).delete(vehicle);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenDeletingNonExistingVehicle() {
+
+        when(vehicleRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                VehicleNotFoundException.class,
+                () -> vehicleService.deleteVehicle(1L)
+        );
+
+        verify(vehicleRepository, never()).delete(any());
+    }
 }
