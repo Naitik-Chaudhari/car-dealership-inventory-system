@@ -1,6 +1,8 @@
 package com.naitik.car_dealership_api.controller;
 
+import com.naitik.car_dealership_api.dto.request.LoginRequest;
 import com.naitik.car_dealership_api.dto.request.RegisterRequest;
+import com.naitik.car_dealership_api.dto.response.LoginResponse;
 import com.naitik.car_dealership_api.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,5 +20,13 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     public void register(@Valid @RequestBody RegisterRequest request) {
         userService.register(request);
+    }
+
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
+    public LoginResponse login(
+            @Valid @RequestBody LoginRequest request) {
+
+        return userService.login(request);
     }
 }
