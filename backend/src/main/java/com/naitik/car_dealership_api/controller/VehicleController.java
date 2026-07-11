@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/vehicles")
 @RequiredArgsConstructor
@@ -19,5 +21,11 @@ public class VehicleController {
     @ResponseStatus(HttpStatus.CREATED)
     public VehicleResponse addVehicle(@Valid @RequestBody VehicleRequest request) {
         return vehicleService.addVehicle(request);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<VehicleResponse> getAllVehicles() {
+        return vehicleService.getAllVehicles();
     }
 }
