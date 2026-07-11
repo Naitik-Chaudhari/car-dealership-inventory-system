@@ -3,6 +3,7 @@ package com.naitik.car_dealership_api.service;
 import com.naitik.car_dealership_api.dto.request.RegisterRequest;
 import com.naitik.car_dealership_api.entity.Role;
 import com.naitik.car_dealership_api.entity.User;
+import com.naitik.car_dealership_api.exception.EmailAlreadyExistsException;
 import com.naitik.car_dealership_api.repository.UserRepository;
 import com.naitik.car_dealership_api.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.when;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -48,5 +54,30 @@ class UserServiceImplTest {
         assertEquals("naitik@gmail.com", savedUser.getEmail());
         assertEquals("password123", savedUser.getPassword());
         assertEquals(Role.USER, savedUser.getRole());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenEmailAlreadyExists() {
+
+        // Arrange
+        RegisterRequest request = RegisterRequest.builder()
+                .name("Naitik")
+                .email("naitik@gmail.com")
+                .password("password123")
+                .build();
+
+        when(userRepository.existsByEmail(request.getEmail()))
+                .thenReturn(true);
+
+        // Act & Assert
+        EmailAlreadyExistsException exception =
+                assertThrows(
+                        EmailAlreadyExistsException.class,
+                        () -> userService.register(request)
+                );
+
+        assertEquals("Email already registered.", exception.getMessage());
+
+        verify(userRepository, never()).save(any(User.class));
     }
 }
