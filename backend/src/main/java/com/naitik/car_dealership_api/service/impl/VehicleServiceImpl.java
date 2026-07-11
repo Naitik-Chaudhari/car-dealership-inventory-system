@@ -5,6 +5,7 @@ import com.naitik.car_dealership_api.dto.response.VehicleResponse;
 import com.naitik.car_dealership_api.entity.Vehicle;
 import com.naitik.car_dealership_api.entity.VehicleCategory;
 import com.naitik.car_dealership_api.exception.DuplicateVehicleException;
+import com.naitik.car_dealership_api.exception.VehicleNotFoundException;
 import com.naitik.car_dealership_api.repository.VehicleRepository;
 import com.naitik.car_dealership_api.service.VehicleService;
 import com.naitik.car_dealership_api.specification.VehicleSpecification;
@@ -92,5 +93,45 @@ public class VehicleServiceImpl implements VehicleService {
                         .quantity(vehicle.getQuantity())
                         .build())
                 .toList();
+    }
+
+    @Override
+    public VehicleResponse updateVehicle(Long id, VehicleRequest request) {
+
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() ->
+                        new VehicleNotFoundException("Vehicle not found"));
+
+        boolean duplicateVehicle =
+                vehicleRepository.existsByMakeAndModelAndCategory(
+                        request.getMake(),
+                        request.getModel(),
+                        request.getCategory());
+
+        boolean isUpdatingToDifferentVehicle =
+                !vehicle.getMake().equals(request.getMake()) ||
+                        !vehicle.getModel().equals(request.getModel()) ||
+                        vehicle.getCategory() != request.getCategory();
+
+        if (duplicateVehicle && isUpdatingToDifferentVehicle) {
+            throw new DuplicateVehicleException("Vehicle already exists");
+        }
+
+        vehicle.setMake(request.getMake());
+        vehicle.setModel(request.getModel());
+        vehicle.setCategory(request.getCategory());
+        vehicle.setPrice(request.getPrice());
+        vehicle.setQuantity(request.getQuantity());
+
+        Vehicle updatedVehicle = vehicleRepository.save(vehicle);
+
+        return VehicleResponse.builder()
+                .id(updatedVehicle.getId())
+                .make(updatedVehicle.getMake())
+                .model(updatedVehicle.getModel())
+                .category(updatedVehicle.getCategory())
+                .price(updatedVehicle.getPrice())
+                .quantity(updatedVehicle.getQuantity())
+                .build();
     }
 }
