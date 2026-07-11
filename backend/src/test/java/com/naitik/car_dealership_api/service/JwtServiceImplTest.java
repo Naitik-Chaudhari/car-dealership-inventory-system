@@ -14,7 +14,11 @@ class JwtServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        jwtService = new JwtServiceImpl();
+
+        jwtService = new JwtServiceImpl(
+                "ThisIsMyVerySecureSecretKeyForJwtGeneration123456789",
+                86400000L
+        );
     }
 
     @Test
@@ -31,5 +35,39 @@ class JwtServiceImplTest {
 
         assertNotNull(token);
         assertFalse(token.isBlank());
+    }
+
+    @Test
+    void shouldExtractUsernameFromToken() {
+
+        User user = User.builder()
+                .id(1L)
+                .name("Naitik")
+                .email("naitik@gmail.com")
+                .role(Role.USER)
+                .build();
+
+        String token = jwtService.generateToken(user);
+
+        String username = jwtService.extractUsername(token);
+
+        assertEquals(user.getEmail(), username);
+    }
+
+    @Test
+    void shouldExtractRoleFromToken() {
+
+        User user = User.builder()
+                .id(1L)
+                .name("Naitik")
+                .email("naitik@gmail.com")
+                .role(Role.ADMIN)
+                .build();
+
+        String token = jwtService.generateToken(user);
+
+        String role = jwtService.extractRole(token);
+
+        assertEquals("ADMIN", role);
     }
 }
