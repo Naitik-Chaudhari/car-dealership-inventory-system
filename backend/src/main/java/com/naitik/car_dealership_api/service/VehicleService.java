@@ -22,4 +22,6 @@ public interface VehicleService {
 
     VehicleResponse updateVehicle(Long id, VehicleRequest request);
 
+    void deleteVehicle(Long id);
+
 }

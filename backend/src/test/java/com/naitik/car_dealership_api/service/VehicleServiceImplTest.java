@@ -440,7 +440,7 @@ class VehicleServiceImplTest {
 
         vehicleService.deleteVehicle(1L);
 
-        verify(vehicleRepository).delete(vehicle);
+        verify(vehicleRepository).deleteById(1L);
     }
 
     @Test
@@ -454,6 +454,6 @@ class VehicleServiceImplTest {
                 () -> vehicleService.deleteVehicle(1L)
         );
 
-        verify(vehicleRepository, never()).delete(any());
+        verify(vehicleRepository, never()).deleteById(anyLong());
     }
 }
