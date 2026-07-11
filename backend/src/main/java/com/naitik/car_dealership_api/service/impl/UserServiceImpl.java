@@ -6,6 +6,7 @@ import com.naitik.car_dealership_api.dto.response.LoginResponse;
 import com.naitik.car_dealership_api.entity.Role;
 import com.naitik.car_dealership_api.entity.User;
 import com.naitik.car_dealership_api.exception.EmailAlreadyExistsException;
+import com.naitik.car_dealership_api.exception.InvalidCredentialsException;
 import com.naitik.car_dealership_api.repository.UserRepository;
 import com.naitik.car_dealership_api.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
-        throw new UnsupportedOperationException("Not implemented yet");
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() ->
+                        new InvalidCredentialsException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid email or password");
+        }
+
+        return LoginResponse.builder().build();
     }
 }
