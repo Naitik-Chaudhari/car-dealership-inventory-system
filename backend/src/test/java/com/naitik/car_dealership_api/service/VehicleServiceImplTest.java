@@ -1,5 +1,6 @@
 package com.naitik.car_dealership_api.service;
 
+import com.naitik.car_dealership_api.dto.request.PurchaseRequest;
 import com.naitik.car_dealership_api.dto.request.VehicleRequest;
 import com.naitik.car_dealership_api.dto.response.VehicleResponse;
 import com.naitik.car_dealership_api.entity.Vehicle;
@@ -455,5 +456,87 @@ class VehicleServiceImplTest {
         );
 
         verify(vehicleRepository, never()).deleteById(anyLong());
+    }
+
+    @Test
+    void shouldPurchaseVehicleSuccessfully() {
+
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category(VehicleCategory.SUV)
+                .price(BigDecimal.valueOf(4500000))
+                .quantity(10)
+                .build();
+
+        when(vehicleRepository.findById(1L))
+                .thenReturn(Optional.of(vehicle));
+
+        when(vehicleRepository.save(any(Vehicle.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        PurchaseRequest request = PurchaseRequest.builder()
+                .quantity(3)
+                .build();
+
+        VehicleResponse response =
+                vehicleService.purchaseVehicle(1L, request);
+
+        assertEquals(7, response.getQuantity());
+
+        verify(vehicleRepository).save(vehicle);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenVehicleDoesNotExist() {
+
+        when(vehicleRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        PurchaseRequest request = PurchaseRequest.builder()
+                .quantity(2)
+                .build();
+
+        assertThrows(
+                VehicleNotFoundException.class,
+                () -> vehicleService.purchaseVehicle(1L, request)
+        );
+    }
+
+    @Test
+    void shouldThrowExceptionWhenRequestedQuantityExceedsStock() {
+
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .quantity(5)
+                .build();
+
+        when(vehicleRepository.findById(1L))
+                .thenReturn(Optional.of(vehicle));
+
+        PurchaseRequest request = PurchaseRequest.builder()
+                .quantity(10)
+                .build();
+
+        assertThrows(
+                InsufficientStockException.class,
+                () -> vehicleService.purchaseVehicle(1L, request)
+        );
+
+        verify(vehicleRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenPurchaseQuantityIsZero() {
+
+        PurchaseRequest request = PurchaseRequest.builder()
+                .quantity(0)
+                .build();
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> vehicleService.purchaseVehicle(1L, request)
+        );
     }
 }
