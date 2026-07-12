@@ -3,6 +3,8 @@ import { Routes, Route } from "react-router-dom";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import AdminRoute from "./components/AdminRoute";
+import AdminVehicles from "./pages/AdminVehicles";
 
 export default function App() {
   return (
@@ -21,6 +23,15 @@ export default function App() {
             path="/register"
             element={<Register />}
         />
+
+          <Route
+              path="/admin"
+              element={
+                  <AdminRoute>
+                      <AdminVehicles />
+                  </AdminRoute>
+              }
+          />
       </Routes>
   );
 }

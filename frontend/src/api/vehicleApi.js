@@ -32,3 +32,32 @@ export const purchaseVehicle = async (id, quantity = 1) => {
 
     return response.data;
 };
+
+export const addVehicle = async (vehicle) => {
+    const response = await axiosInstance.post("/vehicles", vehicle);
+    return response.data;
+};
+
+export const updateVehicle = async (id, vehicle) => {
+    const response = await axiosInstance.put(
+        `/vehicles/${id}`,
+        vehicle
+    );
+
+    return response.data;
+};
+
+export const deleteVehicle = async (id) => {
+    await axiosInstance.delete(`/vehicles/${id}`);
+};
+
+export const restockVehicle = async (id, quantity) => {
+    const response = await axiosInstance.post(
+        `/vehicles/${id}/restock`,
+        {
+            quantity,
+        }
+    );
+
+    return response.data;
+};
