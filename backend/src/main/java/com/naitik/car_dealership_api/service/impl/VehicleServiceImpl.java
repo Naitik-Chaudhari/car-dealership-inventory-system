@@ -7,12 +7,14 @@ import com.naitik.car_dealership_api.entity.Vehicle;
 import com.naitik.car_dealership_api.entity.VehicleCategory;
 import com.naitik.car_dealership_api.exception.DuplicateVehicleException;
 import com.naitik.car_dealership_api.exception.InsufficientStockException;
+import com.naitik.car_dealership_api.exception.InvalidPurchaseException;
 import com.naitik.car_dealership_api.exception.VehicleNotFoundException;
 import com.naitik.car_dealership_api.repository.VehicleRepository;
 import com.naitik.car_dealership_api.service.VehicleService;
 import com.naitik.car_dealership_api.specification.VehicleSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -33,6 +35,23 @@ public class VehicleServiceImpl implements VehicleService {
                 .price(vehicle.getPrice())
                 .quantity(vehicle.getQuantity())
                 .build();
+    }
+
+    private Vehicle getVehicleById(Long id) {
+        return vehicleRepository.findById(id)
+                .orElseThrow(() ->
+                        new VehicleNotFoundException("Vehicle not found"));
+    }
+
+    private void validatePurchase(Vehicle vehicle, Integer quantity) {
+
+        if (quantity <= 0) {
+            throw new InvalidPurchaseException("Purchase quantity must be greater than zero");
+        }
+
+        if (vehicle.getQuantity() < quantity) {
+            throw new InsufficientStockException("Insufficient stock available");
+        }
     }
 
     @Override
@@ -132,24 +151,15 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
+    @Transactional
     public VehicleResponse purchaseVehicle(Long id, PurchaseRequest request) {
 
-        if (request.getQuantity() <= 0) {
-            throw new IllegalArgumentException("Quantity must be greater than zero");
-        }
+        Vehicle vehicle = getVehicleById(id);
 
-        Vehicle vehicle = vehicleRepository.findById(id)
-                .orElseThrow(() ->
-                        new VehicleNotFoundException("Vehicle not found"));
-
-        if (vehicle.getQuantity() < request.getQuantity()) {
-            throw new InsufficientStockException("Insufficient stock available");
-        }
+        validatePurchase(vehicle, request.getQuantity());
 
         vehicle.setQuantity(vehicle.getQuantity() - request.getQuantity());
 
-        Vehicle updatedVehicle = vehicleRepository.save(vehicle);
-
-        return mapToResponse(updatedVehicle);
+        return mapToResponse(vehicleRepository.save(vehicle));
     }
 }
