@@ -1,6 +1,7 @@
 package com.naitik.car_dealership_api.controller;
 
 import com.naitik.car_dealership_api.dto.request.PurchaseRequest;
+import com.naitik.car_dealership_api.dto.request.RestockRequest;
 import com.naitik.car_dealership_api.dto.request.VehicleRequest;
 import com.naitik.car_dealership_api.dto.response.VehicleResponse;
 import com.naitik.car_dealership_api.entity.VehicleCategory;
@@ -75,5 +76,13 @@ public class VehicleController {
             @Valid @RequestBody PurchaseRequest request) {
 
         return vehicleService.purchaseVehicle(id, request);
+    }
+
+    @PostMapping("/{id}/restock")
+    public VehicleResponse restockVehicle(
+            @PathVariable Long id,
+            @Valid @RequestBody RestockRequest request) {
+
+        return vehicleService.restockVehicle(id, request);
     }
 }
