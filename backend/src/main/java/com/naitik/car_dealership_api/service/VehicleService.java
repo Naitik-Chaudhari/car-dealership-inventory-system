@@ -1,6 +1,7 @@
 package com.naitik.car_dealership_api.service;
 
 import com.naitik.car_dealership_api.dto.request.PurchaseRequest;
+import com.naitik.car_dealership_api.dto.request.RestockRequest;
 import com.naitik.car_dealership_api.dto.request.VehicleRequest;
 import com.naitik.car_dealership_api.dto.response.VehicleResponse;
 import com.naitik.car_dealership_api.entity.VehicleCategory;
@@ -26,5 +27,7 @@ public interface VehicleService {
     void deleteVehicle(Long id);
 
     VehicleResponse purchaseVehicle(Long id, PurchaseRequest request);
+
+    VehicleResponse restockVehicle(Long id, RestockRequest request);
 
 }

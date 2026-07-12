@@ -1,14 +1,12 @@
 package com.naitik.car_dealership_api.service;
 
 import com.naitik.car_dealership_api.dto.request.PurchaseRequest;
+import com.naitik.car_dealership_api.dto.request.RestockRequest;
 import com.naitik.car_dealership_api.dto.request.VehicleRequest;
 import com.naitik.car_dealership_api.dto.response.VehicleResponse;
 import com.naitik.car_dealership_api.entity.Vehicle;
 import com.naitik.car_dealership_api.entity.VehicleCategory;
-import com.naitik.car_dealership_api.exception.DuplicateVehicleException;
-import com.naitik.car_dealership_api.exception.InsufficientStockException;
-import com.naitik.car_dealership_api.exception.InvalidPurchaseException;
-import com.naitik.car_dealership_api.exception.VehicleNotFoundException;
+import com.naitik.car_dealership_api.exception.*;
 import com.naitik.car_dealership_api.repository.VehicleRepository;
 import com.naitik.car_dealership_api.service.impl.VehicleServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -539,6 +537,65 @@ class VehicleServiceImplTest {
         assertThrows(
                 InvalidPurchaseException.class,
                 () -> vehicleService.purchaseVehicle(1L, request)
+        );
+    }
+
+    @Test
+    void shouldRestockVehicleSuccessfully() {
+
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category(VehicleCategory.SUV)
+                .price(BigDecimal.valueOf(4500000))
+                .quantity(5)
+                .build();
+
+        when(vehicleRepository.findById(1L))
+                .thenReturn(Optional.of(vehicle));
+
+        when(vehicleRepository.save(any(Vehicle.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        RestockRequest request = RestockRequest.builder()
+                .quantity(10)
+                .build();
+
+        VehicleResponse response =
+                vehicleService.restockVehicle(1L, request);
+
+        assertEquals(15, response.getQuantity());
+
+        verify(vehicleRepository).save(vehicle);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenRestockingNonExistingVehicle() {
+
+        when(vehicleRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        RestockRequest request = RestockRequest.builder()
+                .quantity(5)
+                .build();
+
+        assertThrows(
+                VehicleNotFoundException.class,
+                () -> vehicleService.restockVehicle(1L, request)
+        );
+    }
+
+    @Test
+    void shouldThrowExceptionWhenRestockQuantityIsZero() {
+
+        RestockRequest request = RestockRequest.builder()
+                .quantity(0)
+                .build();
+
+        assertThrows(
+                InvalidRestockException.class,
+                () -> vehicleService.restockVehicle(1L, request)
         );
     }
 }
