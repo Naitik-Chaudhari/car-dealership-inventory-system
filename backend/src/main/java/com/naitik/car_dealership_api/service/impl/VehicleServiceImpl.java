@@ -1,14 +1,12 @@
 package com.naitik.car_dealership_api.service.impl;
 
 import com.naitik.car_dealership_api.dto.request.PurchaseRequest;
+import com.naitik.car_dealership_api.dto.request.RestockRequest;
 import com.naitik.car_dealership_api.dto.request.VehicleRequest;
 import com.naitik.car_dealership_api.dto.response.VehicleResponse;
 import com.naitik.car_dealership_api.entity.Vehicle;
 import com.naitik.car_dealership_api.entity.VehicleCategory;
-import com.naitik.car_dealership_api.exception.DuplicateVehicleException;
-import com.naitik.car_dealership_api.exception.InsufficientStockException;
-import com.naitik.car_dealership_api.exception.InvalidPurchaseException;
-import com.naitik.car_dealership_api.exception.VehicleNotFoundException;
+import com.naitik.car_dealership_api.exception.*;
 import com.naitik.car_dealership_api.repository.VehicleRepository;
 import com.naitik.car_dealership_api.service.VehicleService;
 import com.naitik.car_dealership_api.specification.VehicleSpecification;
@@ -52,6 +50,14 @@ public class VehicleServiceImpl implements VehicleService {
     private void validateAvailableStock(Vehicle vehicle, Integer quantity) {
         if (vehicle.getQuantity() < quantity) {
             throw new InsufficientStockException("Insufficient stock available");
+        }
+    }
+
+    private void validateRestockQuantity(Integer quantity) {
+
+        if (quantity == null || quantity <= 0) {
+            throw new InvalidRestockException(
+                    "Restock quantity must be greater than zero");
         }
     }
 
@@ -162,6 +168,19 @@ public class VehicleServiceImpl implements VehicleService {
         validateAvailableStock(vehicle, request.getQuantity());
 
         vehicle.setQuantity(vehicle.getQuantity() - request.getQuantity());
+
+        return mapToResponse(vehicleRepository.save(vehicle));
+    }
+
+    @Override
+    @Transactional
+    public VehicleResponse restockVehicle(Long id, RestockRequest request) {
+
+        validateRestockQuantity(request.getQuantity());
+
+        Vehicle vehicle = getVehicleById(id);
+
+        vehicle.setQuantity(vehicle.getQuantity() + request.getQuantity());
 
         return mapToResponse(vehicleRepository.save(vehicle));
     }
