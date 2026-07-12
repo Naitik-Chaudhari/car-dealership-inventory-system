@@ -1,14 +1,16 @@
-# Car Dealership Inventory System
+# 🚗 Car Dealership Inventory System
 
-A RESTful backend application for managing a car dealership inventory with secure authentication, role-based authorization, and inventory management.
+A full-stack Car Dealership Inventory System that allows users to browse, search, and purchase vehicles while enabling administrators to manage inventory through a secure dashboard.
 
-The project is built using **Spring Boot**, **Spring Security**, **JWT**, **Spring Data JPA**, and **PostgreSQL**, following the **Test-Driven Development (TDD)** methodology.
+The project consists of a **Spring Boot REST API** backend and a **React** frontend with JWT-based authentication and role-based authorization.
+
+The backend was developed following the **Test-Driven Development (TDD)** methodology.
 
 ---
 
-## Features
+# Features
 
-### Authentication
+## Authentication
 
 - User Registration
 - User Login
@@ -18,49 +20,57 @@ The project is built using **Spring Boot**, **Spring Security**, **JWT**, **Spri
 
 ---
 
-### Vehicle Management
+## User Features
 
-- Add Vehicle (Admin only)
-- View All Vehicles
-- Search Vehicles
+- View all available vehicles
+- Search vehicles by:
   - Make
   - Model
   - Category
   - Price Range
-- Update Vehicle (Admin only)
-- Delete Vehicle (Admin only)
+- Purchase vehicle
+- Purchase confirmation dialog
+- Dynamic inventory updates
+- Responsive dashboard
 
 ---
 
-### Inventory Management
+## Admin Features
 
-- Purchase Vehicle
-  - Decreases vehicle quantity
-  - Prevents purchasing beyond available stock
-
-- Restock Vehicle (Admin only)
-  - Increases vehicle quantity
+- Add Vehicle
+- Update Vehicle
+- Delete Vehicle
+- Restock Vehicle
+- Secure Admin Dashboard
+- Role-Based Route Protection
+- Inventory Management Table
+- Reusable CRUD Modals
 
 ---
 
-### Validation & Error Handling
+## Validation & Error Handling
 
 - Jakarta Bean Validation
 - Global Exception Handling
 - Standardized API Error Responses
+- Frontend Form Validation
+- Toast Notifications
 
 ---
 
-### Security
+## Security
 
 - JWT Authentication
 - Stateless Session Management
 - Spring Security
 - Role-Based Endpoint Authorization
+- Protected React Routes
 
 ---
 
-## Tech Stack
+# Tech Stack
+
+## Backend
 
 - Java 21
 - Spring Boot
@@ -77,52 +87,84 @@ The project is built using **Spring Boot**, **Spring Security**, **JWT**, **Spri
 
 ---
 
-## Architecture
+## Frontend
 
-The application follows a layered architecture.
+- React
+- Vite
+- React Router DOM
+- Axios
+- Tailwind CSS
+- React Hook Form
+- React Hot Toast
+- Lucide React
+- JWT Decode
+
+---
+
+# Architecture
 
 ```
-Client
-   │
-   ▼
-Controller
-   │
-   ▼
-Service
-   │
-   ▼
-Repository
-   │
-   ▼
-PostgreSQL
+                  React Frontend
+                        │
+                        ▼
+                 REST API (Spring Boot)
+                        │
+        JWT Authentication & Authorization
+                        │
+                        ▼
+                  Service Layer
+                        │
+                        ▼
+                  Repository Layer
+                        │
+                        ▼
+                   PostgreSQL Database
 ```
 
 ---
 
-## Project Structure
+# Project Structure
 
 ```
-src
-├── config
-├── controller
-├── dto
-│   ├── request
-│   └── response
-├── entity
-├── exception
-├── repository
-├── security
-├── service
-│   └── impl
-├── specification
-└── test
+car-dealership-inventory-system
+
+backend/
+│
+├── src/
+│   ├── config
+│   ├── controller
+│   ├── dto
+│   ├── entity
+│   ├── exception
+│   ├── repository
+│   ├── security
+│   ├── service
+│   ├── specification
+│   └── test
+│
+├── pom.xml
+└── ...
+
+frontend/
+│
+├── src/
+│   ├── api
+│   ├── components
+│   ├── pages
+│   ├── utils
+│   ├── assets
+│   ├── App.jsx
+│   └── main.jsx
+│
+├── package.json
+└── vite.config.js
 ```
 
 ---
 
-## REST API
+# REST API
 
-### Authentication
+## Authentication
 
 | Method | Endpoint | Access |
 |---------|----------|--------|
@@ -131,19 +173,19 @@ src
 
 ---
 
-### Vehicles
+## Vehicles
 
 | Method | Endpoint | Access |
 |---------|----------|--------|
+| GET | `/api/vehicles` | Public |
+| GET | `/api/vehicles/search` | Public |
 | POST | `/api/vehicles` | ADMIN |
-| GET | `/api/vehicles` | Authenticated |
-| GET | `/api/vehicles/search` | Authenticated |
 | PUT | `/api/vehicles/{id}` | ADMIN |
 | DELETE | `/api/vehicles/{id}` | ADMIN |
 
 ---
 
-### Inventory
+## Inventory
 
 | Method | Endpoint | Access |
 |---------|----------|--------|
@@ -152,7 +194,7 @@ src
 
 ---
 
-## Search Examples
+# Search Examples
 
 Search by make
 
@@ -186,63 +228,49 @@ GET /api/vehicles/search?make=Toyota&category=SUV
 
 ---
 
-## Authentication
+# Running the Backend
 
-Protected endpoints require a JWT access token.
-
-```
-Authorization: Bearer <JWT_TOKEN>
-```
-
----
-
-## Sample Error Response
-
-```json
-{
-  "status": 404,
-  "message": "Vehicle not found"
-}
-```
-
----
-
-## Running the Project
-
-### Clone the repository
+## Clone Repository
 
 ```bash
 git clone https://github.com/Naitik-Chaudhari/car-dealership-inventory-system.git
 ```
 
-### Configure PostgreSQL
+Navigate to backend
 
-Update the database configuration in `application.properties`.
+```bash
+cd backend
+```
+
+Configure PostgreSQL
 
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/car_dealership
-spring.datasource.username=your_username
-spring.datasource.password=your_password
+
+spring.datasource.username=YOUR_USERNAME
+
+spring.datasource.password=YOUR_PASSWORD
 
 spring.jpa.hibernate.ddl-auto=update
 
-jwt.secret=your_secret_key
+jwt.secret=YOUR_SECRET_KEY
+
 jwt.expiration=86400000
 ```
 
-### Build
+Install dependencies
 
 ```bash
 mvn clean install
 ```
 
-### Run
+Run
 
 ```bash
 mvn spring-boot:run
 ```
 
-The application will start on:
+Backend runs at
 
 ```
 http://localhost:8080
@@ -250,72 +278,205 @@ http://localhost:8080
 
 ---
 
-## Testing
+# Running the Frontend
 
-Run all tests
+Navigate to frontend
+
+```bash
+cd frontend
+```
+
+Install dependencies
+
+```bash
+npm install
+```
+
+Run development server
+
+```bash
+npm run dev
+```
+
+Frontend runs at
+
+```
+http://localhost:5173
+```
+
+---
+
+# Screenshots
+
+## Login Page
+
+![Login](screenshots/login.png)
+
+---
+
+## Register Page
+
+![Register](screenshots/register.png)
+
+---
+
+## User Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+---
+
+## Purchase Confirmation
+
+![Purchase](screenshots/purchase.png)
+
+---
+
+## Admin Dashboard
+
+![Admin](screenshots/admin-dashboard.png)
+
+---
+
+## Add Vehicle
+
+![Add Vehicle](screenshots/add-vehicle.png)
+
+---
+
+## Edit Vehicle
+
+![Edit Vehicle](screenshots/edit-vehicle.png)
+
+---
+
+## Delete Vehicle
+
+![Delete Vehicle](screenshots/delete-vehicle.png)
+
+---
+
+## Restock Vehicle
+
+![Restock Vehicle](screenshots/restock-vehicle.png)
+
+---
+
+# Testing
+
+The backend was developed using **Test-Driven Development (TDD)**.
+
+## Test Suite
+
+- Authentication Controller Tests
+- Vehicle Controller Tests
+- Service Layer Tests
+- Repository Tests
+- JWT Utility Tests
+- Security Tests
+- Validation Tests
+
+Run tests
 
 ```bash
 mvn test
 ```
 
-The project includes:
+## Test Report
 
-- Unit Tests
-- Controller Tests
-- JWT Tests
-- Security Tests
-- Validation Tests
+All backend tests pass successfully.
 
----
+## UserService Test
 
-## Features Completed
+![UserService](screenshots/login.png)
 
-- ✅ User Registration
-- ✅ User Login
-- ✅ JWT Authentication
-- ✅ Role-Based Authorization
-- ✅ Add Vehicle
-- ✅ View All Vehicles
-- ✅ Search Vehicles
-- ✅ Update Vehicle
-- ✅ Delete Vehicle
-- ✅ Purchase Vehicle
-- ✅ Restock Vehicle
-- ✅ Global Exception Handling
-- ✅ Request Validation
-- ✅ Comprehensive Unit & Controller Tests
+## VehicleService Test
+
+![VehicleService](screenshots/login.png)
+
+## VehicleController Test
+
+![VehicleController](screenshots/login.png)
+
+## JwtService Test
+
+![JwtService](screenshots/login.png)
+
+## JwtAuthenticationFilter Test
+
+![JwtAuthenticationFilter](screenshots/login.png)
 
 ---
 
-## Future Enhancements
+# Development Methodology
 
-The following features are planned for future development:
+The backend was developed using the **Test-Driven Development (TDD)** approach.
 
-- React Frontend
-- Swagger / OpenAPI Documentation
-- Docker Support
-- Pagination & Sorting
-- Refresh Token Authentication
-- Vehicle Image Upload
-- Order History
-- CI/CD Pipeline
-
----
-
-## Development Methodology
-
-This project was developed using the **Test-Driven Development (TDD)** approach.
-
-For each feature:
+For every feature:
 
 1. Write a failing test (Red)
-2. Implement the minimum code to pass (Green)
-3. Refactor while keeping all tests green (Refactor)
+2. Implement the minimum code (Green)
+3. Refactor while keeping all tests passing (Refactor)
 
 ---
 
-## Author
+# My AI Usage
+
+## AI Tools Used
+
+- ChatGPT (Primary AI Assistant)
+
+---
+
+## How I Used AI
+
+I used ChatGPT throughout the development process as a technical assistant. Specifically, I used it to:
+
+- Brainstorm the project architecture and component structure.
+- Discuss REST API design and frontend integration.
+- Generate boilerplate React components and reusable modal components.
+- Design responsive user interfaces using Tailwind CSS.
+- Debug issues related to Spring Security, JWT authentication, CORS, routing, and API integration.
+- Improve frontend state management and reusable component design.
+- Generate meaningful Git commit messages following conventional commit standards.
+- Review code structure and suggest improvements for maintainability.
+- Improve project documentation and README formatting.
+
+Every AI-generated suggestion was reviewed, tested, and modified where necessary before being integrated into the project.
+
+---
+
+## Reflection
+
+Using AI significantly improved my development workflow by reducing time spent on repetitive coding tasks and helping explore implementation ideas more efficiently.
+
+Rather than replacing my understanding of the project, AI acted as a development assistant that accelerated problem-solving, code organization, debugging, and documentation. All generated code was manually reviewed, tested, and adapted to meet the project requirements.
+
+---
+
+# Future Enhancements
+
+- Vehicle Image Upload
+- Pagination
+- Sorting
+- Purchase History
+- User Profile
+- Refresh Token Authentication
+- Docker Support
+- Swagger / OpenAPI Documentation
+- CI/CD Pipeline
+- Email Notifications
+
+---
+
+# Author
 
 **Naitik Chaudhari**
 
-- GitHub: https://github.com/Naitik-Chaudhari
+GitHub
+
+https://github.com/Naitik-Chaudhari
+
+Email
+
+naitikchaudhari3011@gmail.com
