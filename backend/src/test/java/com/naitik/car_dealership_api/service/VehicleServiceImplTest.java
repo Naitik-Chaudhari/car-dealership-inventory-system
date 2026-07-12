@@ -7,6 +7,7 @@ import com.naitik.car_dealership_api.entity.Vehicle;
 import com.naitik.car_dealership_api.entity.VehicleCategory;
 import com.naitik.car_dealership_api.exception.DuplicateVehicleException;
 import com.naitik.car_dealership_api.exception.InsufficientStockException;
+import com.naitik.car_dealership_api.exception.InvalidPurchaseException;
 import com.naitik.car_dealership_api.exception.VehicleNotFoundException;
 import com.naitik.car_dealership_api.repository.VehicleRepository;
 import com.naitik.car_dealership_api.service.impl.VehicleServiceImpl;
@@ -536,7 +537,7 @@ class VehicleServiceImplTest {
                 .build();
 
         assertThrows(
-                IllegalArgumentException.class,
+                InvalidPurchaseException.class,
                 () -> vehicleService.purchaseVehicle(1L, request)
         );
     }

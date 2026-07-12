@@ -43,12 +43,13 @@ public class VehicleServiceImpl implements VehicleService {
                         new VehicleNotFoundException("Vehicle not found"));
     }
 
-    private void validatePurchase(Vehicle vehicle, Integer quantity) {
-
-        if (quantity <= 0) {
+    private void validatePurchaseQuantity(Integer quantity) {
+        if (quantity == null || quantity <= 0) {
             throw new InvalidPurchaseException("Purchase quantity must be greater than zero");
         }
+    }
 
+    private void validateAvailableStock(Vehicle vehicle, Integer quantity) {
         if (vehicle.getQuantity() < quantity) {
             throw new InsufficientStockException("Insufficient stock available");
         }
@@ -154,9 +155,11 @@ public class VehicleServiceImpl implements VehicleService {
     @Transactional
     public VehicleResponse purchaseVehicle(Long id, PurchaseRequest request) {
 
+        validatePurchaseQuantity(request.getQuantity());
+
         Vehicle vehicle = getVehicleById(id);
 
-        validatePurchase(vehicle, request.getQuantity());
+        validateAvailableStock(vehicle, request.getQuantity());
 
         vehicle.setQuantity(vehicle.getQuantity() - request.getQuantity());
 
