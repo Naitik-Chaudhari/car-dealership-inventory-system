@@ -1,17 +1,26 @@
 import { Routes, Route } from "react-router-dom";
+
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-
-function Dashboard() {
-    return <h1>Dashboard</h1>;
-}
+import Dashboard from "./pages/Dashboard";
 
 export default function App() {
-    return (
-        <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-        </Routes>
-    );
+  return (
+      <Routes>
+        <Route
+            path="/"
+            element={<Dashboard />}
+        />
+
+        <Route
+            path="/login"
+            element={<Login />}
+        />
+
+        <Route
+            path="/register"
+            element={<Register />}
+        />
+      </Routes>
+  );
 }
