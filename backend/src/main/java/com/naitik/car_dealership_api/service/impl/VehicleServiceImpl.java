@@ -1,10 +1,12 @@
 package com.naitik.car_dealership_api.service.impl;
 
+import com.naitik.car_dealership_api.dto.request.PurchaseRequest;
 import com.naitik.car_dealership_api.dto.request.VehicleRequest;
 import com.naitik.car_dealership_api.dto.response.VehicleResponse;
 import com.naitik.car_dealership_api.entity.Vehicle;
 import com.naitik.car_dealership_api.entity.VehicleCategory;
 import com.naitik.car_dealership_api.exception.DuplicateVehicleException;
+import com.naitik.car_dealership_api.exception.InsufficientStockException;
 import com.naitik.car_dealership_api.exception.VehicleNotFoundException;
 import com.naitik.car_dealership_api.repository.VehicleRepository;
 import com.naitik.car_dealership_api.service.VehicleService;
@@ -127,5 +129,27 @@ public class VehicleServiceImpl implements VehicleService {
                         new VehicleNotFoundException("Vehicle not found"));
 
         vehicleRepository.deleteById(vehicle.getId());
+    }
+
+    @Override
+    public VehicleResponse purchaseVehicle(Long id, PurchaseRequest request) {
+
+        if (request.getQuantity() <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero");
+        }
+
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() ->
+                        new VehicleNotFoundException("Vehicle not found"));
+
+        if (vehicle.getQuantity() < request.getQuantity()) {
+            throw new InsufficientStockException("Insufficient stock available");
+        }
+
+        vehicle.setQuantity(vehicle.getQuantity() - request.getQuantity());
+
+        Vehicle updatedVehicle = vehicleRepository.save(vehicle);
+
+        return mapToResponse(updatedVehicle);
     }
 }

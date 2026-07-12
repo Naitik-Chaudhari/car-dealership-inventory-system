@@ -6,6 +6,7 @@ import com.naitik.car_dealership_api.dto.response.VehicleResponse;
 import com.naitik.car_dealership_api.entity.Vehicle;
 import com.naitik.car_dealership_api.entity.VehicleCategory;
 import com.naitik.car_dealership_api.exception.DuplicateVehicleException;
+import com.naitik.car_dealership_api.exception.InsufficientStockException;
 import com.naitik.car_dealership_api.exception.VehicleNotFoundException;
 import com.naitik.car_dealership_api.repository.VehicleRepository;
 import com.naitik.car_dealership_api.service.impl.VehicleServiceImpl;
@@ -489,7 +490,7 @@ class VehicleServiceImplTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenVehicleDoesNotExist() {
+    void shouldThrowExceptionWhenPurchasingNonExistingVehicle() {
 
         when(vehicleRepository.findById(1L))
                 .thenReturn(Optional.empty());
