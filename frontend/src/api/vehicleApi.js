@@ -21,3 +21,14 @@ export const searchVehicles = async (filters) => {
 
     return response.data;
 };
+
+export const purchaseVehicle = async (id, quantity = 1) => {
+    const response = await axiosInstance.post(
+        `/vehicles/${id}/purchase`,
+        {
+            quantity,
+        }
+    );
+
+    return response.data;
+};

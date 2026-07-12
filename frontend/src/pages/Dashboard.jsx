@@ -7,17 +7,22 @@ import SearchFilter from "../components/SearchFilter";
 import VehicleCard from "../components/VehicleCard";
 import VehicleCardSkeleton from "../components/VehicleCardSkeleton";
 import { useNavigate } from "react-router-dom";
+import PurchaseModal from "../components/PurchaseModal";
 
 import {
     getAllVehicles,
     searchVehicles,
+    purchaseVehicle,
 } from "../api/vehicleApi";
 
 export default function Dashboard() {
     const [vehicles, setVehicles] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [purchasingId, setPurchasingId] = useState(null);
     const [showFilters, setShowFilters] = useState(false);
     const navigate = useNavigate();
+    const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+    const [selectedVehicle, setSelectedVehicle] = useState(null);
 
     const [filters, setFilters] = useState({
         make: "",
@@ -71,20 +76,67 @@ export default function Dashboard() {
         loadVehicles();
     };
 
-    const handlePurchase = (vehicleId) => {
+    const handlePurchase = async () => {
+
+        try {
+
+            setPurchasingId(selectedVehicle.id);
+
+            const updatedVehicle =
+                await purchaseVehicle(selectedVehicle.id,1);
+
+            setVehicles(previousVehicles =>
+                previousVehicles.map(vehicle =>
+                    vehicle.id === updatedVehicle.id
+                        ? updatedVehicle
+                        : vehicle
+                )
+            );
+
+            toast.success("Vehicle purchased successfully.");
+
+            setShowPurchaseModal(false);
+
+        }
+        catch(error){
+
+            if(error.response?.status===404){
+
+                toast.error(error.response.data.message);
+
+            }
+
+            else{
+
+                toast.error("Purchase failed.");
+
+            }
+
+        }
+        finally{
+
+            setPurchasingId(null);
+
+        }
+
+    };
+
+    const handlePurchaseClick = (vehicle) => {
 
         const token = localStorage.getItem("token");
 
         if (!token) {
 
-            toast.error("Please login to purchase a vehicle.");
+            toast.error("Please login first.");
 
             navigate("/login");
 
             return;
         }
 
-        console.log(vehicleId);
+        setSelectedVehicle(vehicle);
+
+        setShowPurchaseModal(true);
 
     };
 
@@ -190,7 +242,8 @@ export default function Dashboard() {
                             <VehicleCard
                                 key={vehicle.id}
                                 vehicle={vehicle}
-                                onPurchase={handlePurchase}
+                                onPurchase={() => handlePurchaseClick(vehicle)}
+                                purchasing={purchasingId === vehicle.id}
                             />
                         ))}
 
@@ -199,6 +252,13 @@ export default function Dashboard() {
 
             </div>
 
+            <PurchaseModal
+                open={showPurchaseModal}
+                vehicle={selectedVehicle}
+                loading={purchasingId !== null}
+                onClose={() => setShowPurchaseModal(false)}
+                onConfirm={handlePurchase}
+            />
         </div>
     );
 }

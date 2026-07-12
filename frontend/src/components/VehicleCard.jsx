@@ -4,7 +4,7 @@ import {
     PackageX,
 } from "lucide-react";
 
-export default function VehicleCard({ vehicle, onPurchase }) {
+export default function VehicleCard({vehicle, onPurchase, purchasing,}) {
     const stockColor = () => {
         if (vehicle.quantity === 0)
             return "bg-red-100 text-red-700";
@@ -101,7 +101,7 @@ export default function VehicleCard({ vehicle, onPurchase }) {
             </div>
 
             <button
-                disabled={vehicle.quantity === 0}
+                disabled={vehicle.quantity === 0 || purchasing}
                 onClick={() => onPurchase(vehicle.id)}
                 className={`mt-6 w-full py-3 rounded-xl font-semibold transition flex justify-center items-center gap-2
           ${
@@ -110,7 +110,11 @@ export default function VehicleCard({ vehicle, onPurchase }) {
                         : "bg-blue-600 hover:bg-blue-700 text-white"
                 }`}
             >
-                {vehicle.quantity === 0 ? (
+                {purchasing ? (
+                <>
+                    Purchasing...
+                </>
+                ) : vehicle.quantity === 0 ? (
                     <>
                         <PackageX size={18} />
                         Out of Stock
