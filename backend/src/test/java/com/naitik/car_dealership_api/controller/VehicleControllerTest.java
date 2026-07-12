@@ -3,6 +3,8 @@ package com.naitik.car_dealership_api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.naitik.car_dealership_api.dto.request.VehicleRequest;
 import com.naitik.car_dealership_api.entity.VehicleCategory;
+import com.naitik.car_dealership_api.service.CustomUserDetailsService;
+import com.naitik.car_dealership_api.service.JwtService;
 import com.naitik.car_dealership_api.service.VehicleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,12 @@ public class VehicleControllerTest {
 
     @MockitoBean
     private VehicleService vehicleService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Test
     void shouldReturnBadRequestWhenMakeIsBlank() throws Exception {
@@ -114,6 +122,4 @@ public class VehicleControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
-
-
 }

@@ -1,5 +1,6 @@
 package com.naitik.car_dealership_api.controller;
 
+import com.naitik.car_dealership_api.dto.request.PurchaseRequest;
 import com.naitik.car_dealership_api.dto.request.VehicleRequest;
 import com.naitik.car_dealership_api.dto.response.VehicleResponse;
 import com.naitik.car_dealership_api.entity.VehicleCategory;
@@ -65,5 +66,14 @@ public class VehicleController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteVehicle(@PathVariable Long id) {
         vehicleService.deleteVehicle(id);
+    }
+
+    @PostMapping("/{id}/purchase")
+    @ResponseStatus(HttpStatus.OK)
+    public VehicleResponse purchaseVehicle(
+            @PathVariable Long id,
+            @Valid @RequestBody PurchaseRequest request) {
+
+        return vehicleService.purchaseVehicle(id, request);
     }
 }
