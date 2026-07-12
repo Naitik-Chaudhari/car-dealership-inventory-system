@@ -388,23 +388,23 @@ All backend tests pass successfully.
 
 ## UserService Test
 
-![UserService](screenshots/login.png)
+![UserService](screenshots/UserServiceImplTest.png)
 
 ## VehicleService Test
 
-![VehicleService](screenshots/login.png)
+![VehicleService](screenshots/VehicleServiceImplTest.png)
 
 ## VehicleController Test
 
-![VehicleController](screenshots/login.png)
+![VehicleController](screenshots/VehicleControllerTest.png)
 
 ## JwtService Test
 
-![JwtService](screenshots/login.png)
+![JwtService](screenshots/JwtServiceImplTest.png)
 
 ## JwtAuthenticationFilter Test
 
-![JwtAuthenticationFilter](screenshots/login.png)
+![JwtAuthenticationFilter](screenshots/JwtAuthenticationFilterTest.png)
 
 ---
 
